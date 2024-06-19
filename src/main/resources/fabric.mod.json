@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "offlinecommands",
+	"version": "${version}",
+	"name": "OfflineCommands",
+	"description": "Run commands on offline players",
+	"authors": [
+		"Drex"
+	],
+	"license": "MIT",
+	"icon": "assets/offlinecommands/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"me.drex.offlinecommands.OfflineCommands"
+		]
+	},
+	"mixins": [
+		"offlinecommands.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}

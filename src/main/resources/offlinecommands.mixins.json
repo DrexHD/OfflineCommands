@@ -1,0 +1,33 @@
+{
+  "required": true,
+  "package": "me.drex.offlinecommands.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EntitySelectorMixin",
+    "accessor.PlayerListAccessor",
+    "commands.AdvancementCommandsMixin",
+    "commands.AttributeCommandMixin",
+    "commands.BossBarCommandsMixin",
+    "commands.ClearInventoryCommandsMixin",
+    "commands.DamageCommandMixin",
+    "commands.EffectCommandsMixin",
+    "commands.EnchantCommandMixin",
+    "commands.ExecuteCommandMixin",
+    "commands.ExperienceCommandMixin",
+    "commands.GameModeCommandMixin",
+    "commands.GiveCommandMixin",
+    "commands.ItemCommandsMixin",
+    "commands.KillCommandMixin",
+    "commands.LootCommandMixin",
+    "commands.RecipeCommandMixin",
+    "commands.SetSpawnCommandMixin",
+    "commands.SpreadPlayersCommandMixin",
+    "commands.TagCommandMixin",
+    "commands.TeleportCommandMixin",
+    "commands.data.EntityDataAccessor$1Mixin",
+    "commands.data.EntityDataAccessorMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}
