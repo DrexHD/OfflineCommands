@@ -77,8 +77,6 @@ publishMods {
 		repository = providers.environmentVariable("GITHUB_REPOSITORY").getOrElse("DrexHD/dryrun")
 		commitish = providers.environmentVariable("GITHUB_REF_NAME").getOrElse("dryrun")
 	}
-
-	dryRun = true
 }
 
 private String fetchChangelog() {
