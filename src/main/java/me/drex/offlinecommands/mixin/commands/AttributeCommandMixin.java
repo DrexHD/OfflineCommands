@@ -6,6 +6,7 @@ import me.drex.offlinecommands.OfflineCommands;
 import me.drex.offlinecommands.commands.OfflineEntityArgument;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.AttributeCommand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -52,7 +53,7 @@ public abstract class AttributeCommandMixin {
         method = "getAttributeModifier",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer$getAttributeModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, UUID uUID, double d, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer$getAttributeModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, ResourceLocation resourceLocation, double d, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntity(entity);
     }
 
@@ -68,7 +69,7 @@ public abstract class AttributeCommandMixin {
         method = "addModifier",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer$addModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, UUID uUID, String string, double d, AttributeModifier.Operation operation, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer$addModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, ResourceLocation resourceLocation, double d, AttributeModifier.Operation operation, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntity(entity);
     }
 
@@ -76,7 +77,7 @@ public abstract class AttributeCommandMixin {
         method = "removeModifier",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer$removeModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, UUID uUID, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer$removeModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, ResourceLocation resourceLocation, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntity(entity);
     }
 
