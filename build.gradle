@@ -59,7 +59,7 @@ publishMods {
 	file = remapJar.archiveFile
 	changelog = fetchChangelog()
 	type = STABLE
-	displayName = "PerPlayerWanderingTraders ${version.get()}"
+	displayName = "OfflineCommands ${version.get()}"
 	modLoaders.add("fabric")
 	modLoaders.add("quilt")
 	modrinth {
