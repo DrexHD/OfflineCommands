@@ -30,7 +30,6 @@ public abstract class GiveCommandMixin {
         return OfflineEntityArgument.getOfflinePlayers(commandContext, string);
     }
 
-    // TODO Items are not dropped (at the correct location?) if inventory is full
     @Inject(
         method = "giveItem",
         at = @At("RETURN")
