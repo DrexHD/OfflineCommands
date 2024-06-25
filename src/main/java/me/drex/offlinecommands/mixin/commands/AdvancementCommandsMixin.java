@@ -4,7 +4,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.drex.offlinecommands.OfflineCommands;
 import me.drex.offlinecommands.commands.OfflineEntityArgument;
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.commands.AdvancementCommands;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,7 +35,7 @@ public abstract class AdvancementCommandsMixin {
         method = "perform",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, @Coerce Object action, Collection<AdvancementHolder> collection2, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, @Coerce Object action, Collection<Advancement> collection2, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntities(collection);
     }
 
@@ -43,7 +43,7 @@ public abstract class AdvancementCommandsMixin {
         method = "performCriterion",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, @Coerce Object action, AdvancementHolder advancementHolder, String string, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, @Coerce Object action, Advancement advancement, String string, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntities(collection);
     }
 

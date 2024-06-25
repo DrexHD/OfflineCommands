@@ -12,7 +12,6 @@
     "commands.DamageCommandMixin",
     "commands.EffectCommandsMixin",
     "commands.EnchantCommandMixin",
-    "commands.ExecuteCommandMixin",
     "commands.ExperienceCommandMixin",
     "commands.GameModeCommandMixin",
     "commands.GiveCommandMixin",

@@ -7,7 +7,7 @@ import me.drex.offlinecommands.commands.OfflineEntityArgument;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.commands.RecipeCommand;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.Recipe;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,7 +34,7 @@ public abstract class RecipeCommandMixin {
         method = "giveRecipes",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer$giveRecipes(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, Collection<RecipeHolder<?>> collection2, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer$giveRecipes(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, Collection<Recipe<?>> collection2, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntities(collection);
     }
 
@@ -42,7 +42,7 @@ public abstract class RecipeCommandMixin {
         method = "takeRecipes",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer$takeRecipes(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, Collection<RecipeHolder<?>> collection2, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer$takeRecipes(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, Collection<Recipe<?>> collection2, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntities(collection);
     }
 

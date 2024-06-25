@@ -4,11 +4,9 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.drex.offlinecommands.OfflineCommands;
 import me.drex.offlinecommands.commands.OfflineEntityArgument;
-import me.drex.offlinecommands.mixin.accessor.PlayerListAccessor;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.commands.ClearInventoryCommands;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,19 +29,6 @@ public abstract class ClearInventoryCommandsMixin {
     )
     private static Collection<ServerPlayer> getOfflinePlayers(CommandContext<CommandSourceStack> commandContext, String string) throws CommandSyntaxException {
         return OfflineEntityArgument.getOfflinePlayers(commandContext, string);
-    }
-
-    @Inject(
-        method = "clearUnlimited",
-        at = @At("RETURN")
-    )
-    private static void saveOfflinePlayer(CommandSourceStack source, Collection<ServerPlayer> collection, Predicate<ItemStack> predicate, CallbackInfoReturnable<Integer> cir) {
-        PlayerList playerList = source.getServer().getPlayerList();
-        for (ServerPlayer serverPlayer : collection) {
-            if (!playerList.getPlayers().contains(serverPlayer)) {
-                ((PlayerListAccessor) playerList).invokeSave(serverPlayer);
-            }
-        }
     }
 
     @Inject(
