@@ -32,10 +32,10 @@ public abstract class AdvancementCommandsMixin {
     }
 
     @Inject(
-        method = "perform",
+        method = "perform(Lnet/minecraft/commands/CommandSourceStack;Ljava/util/Collection;Lnet/minecraft/server/commands/AdvancementCommands$Action;Ljava/util/Collection;Z)I",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, @Coerce Object action, Collection<AdvancementHolder> collection2, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, @Coerce Object action, Collection<AdvancementHolder> collection2, boolean bl, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntities(collection);
     }
 
