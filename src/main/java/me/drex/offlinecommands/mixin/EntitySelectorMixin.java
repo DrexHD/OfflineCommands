@@ -17,8 +17,10 @@ import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.storage.ValueInput;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,7 +40,7 @@ public class EntitySelectorMixin implements OfflineEntitySelector {
     private @Nullable String playerName;
 
     @Override
-    public List<ServerPlayer> findOfflinePlayer(CommandSourceStack source) throws CommandSyntaxException {
+    public List<ServerPlayer> findOfflinePlayer(CommandSourceStack source) {
         if (this.playerName == null) {
             return Collections.emptyList();
         }
@@ -48,20 +50,23 @@ public class EntitySelectorMixin implements OfflineEntitySelector {
         if (optionalProfile.isEmpty()) {
             return Collections.emptyList();
         }
-        ServerPlayer serverPlayer = playerList.getPlayerForLogin(optionalProfile.get(), ClientInformation.createDefault());
+        ServerPlayer serverPlayer = new ServerPlayer(server, server.overworld(), optionalProfile.get(), ClientInformation.createDefault());
         new FakePlayerNetworkHandler(serverPlayer);
+        try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(serverPlayer.problemPath(), LOGGER)) {
+            Optional<ValueInput> optional = playerList.load(serverPlayer, scopedCollector);
+            // [VanillaCopy] - PlayerList.placeNewPlayer
+            ResourceKey<Level> resourceKey = optional.flatMap(valueInput -> valueInput.read("Dimension", Level.RESOURCE_KEY_CODEC))
+                .orElse(Level.OVERWORLD);
+            ServerLevel serverLevel = server.getLevel(resourceKey);
+            if (serverLevel == null) {
+                serverLevel = server.overworld();
+            }
+            serverPlayer.setServerLevel(serverLevel);
+            serverPlayer.loadGameTypes(optional.orElse(null));
 
-        Optional<CompoundTag> optional = playerList.load(serverPlayer);
-        // [VanillaCopy] - PlayerList.placeNewPlayer
-        ResourceKey<Level> resourceKey = optional.flatMap(compoundTag -> DimensionType.parseLegacy(new Dynamic<>(NbtOps.INSTANCE, compoundTag.get("Dimension"))).resultOrPartial(LOGGER::error)).orElse(Level.OVERWORLD);
-        ServerLevel serverLevel = server.getLevel(resourceKey);
-        if (serverLevel == null) {
-            serverLevel = server.overworld();
+            return Lists.newArrayList(serverPlayer);
         }
-        serverPlayer.setServerLevel(serverLevel);
-        serverPlayer.loadGameTypes(optional.orElse(null));
 
-        return Lists.newArrayList(serverPlayer);
     }
 
 }
