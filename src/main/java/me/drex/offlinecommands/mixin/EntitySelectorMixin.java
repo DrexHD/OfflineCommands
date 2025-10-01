@@ -2,25 +2,23 @@ package me.drex.offlinecommands.mixin;
 
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.serialization.Dynamic;
 import me.drex.offlinecommands.util.OfflineEntitySelector;
-import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.impl.event.interaction.FakePlayerNetworkHandler;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.selector.EntitySelector;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ClientInformation;
+import net.minecraft.server.level.PlayerSpawnFinder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.util.ProblemReporter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.storage.LevelData;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,23 +44,31 @@ public class EntitySelectorMixin implements OfflineEntitySelector {
         }
         MinecraftServer server = source.getServer();
         PlayerList playerList = server.getPlayerList();
-        Optional<GameProfile> optionalProfile = server.getProfileCache().get(this.playerName);
+        Optional<NameAndId> optionalProfile = server.services().nameToIdCache().get(this.playerName);
         if (optionalProfile.isEmpty()) {
             return Collections.emptyList();
         }
-        ServerPlayer serverPlayer = new ServerPlayer(server, server.overworld(), optionalProfile.get(), ClientInformation.createDefault());
+
+        ServerPlayer serverPlayer = new ServerPlayer(server, server.overworld(), new GameProfile(optionalProfile.get().id(), optionalProfile.get().name()), ClientInformation.createDefault());
         new FakePlayerNetworkHandler(serverPlayer);
         try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(serverPlayer.problemPath(), LOGGER)) {
-            Optional<ValueInput> optional = playerList.load(serverPlayer, scopedCollector);
-            // [VanillaCopy] - PlayerList.placeNewPlayer
-            ResourceKey<Level> resourceKey = optional.flatMap(valueInput -> valueInput.read("Dimension", Level.RESOURCE_KEY_CODEC))
-                .orElse(Level.OVERWORLD);
-            ServerLevel serverLevel = server.getLevel(resourceKey);
-            if (serverLevel == null) {
-                serverLevel = server.overworld();
-            }
-            serverPlayer.setServerLevel(serverLevel);
-            serverPlayer.loadGameTypes(optional.orElse(null));
+            Optional<ValueInput> optional = playerList.loadPlayerData(optionalProfile.get())
+                .map(compoundTag -> TagValueInput.create(scopedCollector, server.registryAccess(), compoundTag));
+            // [VanillaCopy] - PrepareSpawnTask.start
+            ServerPlayer.SavedPosition savedPosition = optional.flatMap(valueInput -> valueInput.read(ServerPlayer.SavedPosition.MAP_CODEC))
+                .orElse(ServerPlayer.SavedPosition.EMPTY);
+            LevelData.RespawnData respawnData = server.getWorldData().overworldData().getRespawnData();
+            ServerLevel spawnLevel = savedPosition.dimension().map(server::getLevel).orElseGet(() -> {
+                ServerLevel serverLevelx = server.getLevel(respawnData.dimension());
+                return serverLevelx != null ? serverLevelx : server.overworld();
+            });
+            Vec3 spawnPosition = savedPosition.position().orElseGet(() -> PlayerSpawnFinder.findSpawn(spawnLevel, respawnData.pos()).join());
+
+            Vec2 spawnAngle = savedPosition.rotation().orElse(new Vec2(respawnData.yaw(), respawnData.pitch()));
+
+            // [VanillaCopy] - PrepareSpawnTask$Ready.spawn
+            optional.ifPresent(serverPlayer::load);
+            serverPlayer.snapTo(spawnPosition, spawnAngle.x, spawnAngle.y);
 
             return Lists.newArrayList(serverPlayer);
         }

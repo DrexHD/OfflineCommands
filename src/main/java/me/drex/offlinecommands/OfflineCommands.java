@@ -26,7 +26,7 @@ public class OfflineCommands implements ModInitializer {
         if (!(entity instanceof ServerPlayer player)) {
             return;
         }
-        PlayerList playerList = player.getServer().getPlayerList();
+        PlayerList playerList = player.level().getServer().getPlayerList();
         if (playerList.getPlayers().contains(player)) {
             // Player is online
             return;

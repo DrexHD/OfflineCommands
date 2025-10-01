@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.drex.offlinecommands.OfflineCommands;
 import me.drex.offlinecommands.commands.OfflineEntityArgument;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.coordinates.Coordinates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.commands.SetSpawnCommand;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,7 +35,7 @@ public abstract class SetSpawnCommandMixin {
         method = "setSpawn",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, BlockPos blockPos, float f, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer(CommandSourceStack commandSourceStack, Collection<ServerPlayer> collection, BlockPos blockPos, Coordinates coordinates, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntities(collection);
     }
 
