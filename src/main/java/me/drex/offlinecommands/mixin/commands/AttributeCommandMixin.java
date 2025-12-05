@@ -6,7 +6,7 @@ import me.drex.offlinecommands.OfflineCommands;
 import me.drex.offlinecommands.commands.OfflineEntityArgument;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.commands.AttributeCommand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -16,8 +16,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.UUID;
 
 @Mixin(AttributeCommand.class)
 public abstract class AttributeCommandMixin {
@@ -53,7 +51,7 @@ public abstract class AttributeCommandMixin {
         method = "getAttributeModifier",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer$getAttributeModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, ResourceLocation resourceLocation, double d, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer$getAttributeModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, Identifier resourceLocation, double d, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntity(entity);
     }
 
@@ -69,7 +67,7 @@ public abstract class AttributeCommandMixin {
         method = "addModifier",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer$addModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, ResourceLocation resourceLocation, double d, AttributeModifier.Operation operation, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer$addModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, Identifier resourceLocation, double d, AttributeModifier.Operation operation, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntity(entity);
     }
 
@@ -77,7 +75,7 @@ public abstract class AttributeCommandMixin {
         method = "removeModifier",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer$removeModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, ResourceLocation resourceLocation, CallbackInfoReturnable<Integer> cir) {
+    private static void saveOfflinePlayer$removeModifier(CommandSourceStack commandSourceStack, Entity entity, Holder<Attribute> holder, Identifier resourceLocation, CallbackInfoReturnable<Integer> cir) {
         OfflineCommands.saveEntity(entity);
     }
 
