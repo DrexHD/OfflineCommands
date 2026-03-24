@@ -3,7 +3,7 @@ package me.drex.offlinecommands.mixin;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import me.drex.offlinecommands.util.OfflineEntitySelector;
-import net.fabricmc.fabric.impl.event.interaction.FakePlayerNetworkHandler;
+import net.fabricmc.fabric.impl.event.interaction.FakePlayerPacketListener;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.server.MinecraftServer;
@@ -51,7 +51,7 @@ public class EntitySelectorMixin implements OfflineEntitySelector {
         }
 
         ServerPlayer serverPlayer = new ServerPlayer(server, server.overworld(), new GameProfile(optionalProfile.get().id(), optionalProfile.get().name()), ClientInformation.createDefault());
-        new FakePlayerNetworkHandler(serverPlayer);
+        new FakePlayerPacketListener(serverPlayer);
         try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(serverPlayer.problemPath(), LOGGER)) {
             Optional<ValueInput> optional = playerList.loadPlayerData(optionalProfile.get())
                 .map(compoundTag -> TagValueInput.create(scopedCollector, server.registryAccess(), compoundTag));
