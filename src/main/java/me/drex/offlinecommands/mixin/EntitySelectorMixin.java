@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static me.drex.offlinecommands.OfflineCommands.LOGGER;
 
@@ -62,7 +63,11 @@ public class EntitySelectorMixin implements OfflineEntitySelector {
                 ServerLevel serverLevelx = server.getLevel(respawnData.dimension());
                 return serverLevelx != null ? serverLevelx : server.overworld();
             });
-            Vec3 spawnPosition = savedPosition.position().orElseGet(() -> PlayerSpawnFinder.findSpawn(spawnLevel, respawnData.pos()).join());
+            Vec3 spawnPosition = savedPosition.position().orElseGet(() -> {
+                CompletableFuture<Vec3> future = PlayerSpawnFinder.findSpawn(spawnLevel, respawnData.pos());
+                server.managedBlock(future::isDone);
+                return future.join();
+            });
 
             Vec2 spawnAngle = savedPosition.rotation().orElse(new Vec2(respawnData.yaw(), respawnData.pitch()));
 
