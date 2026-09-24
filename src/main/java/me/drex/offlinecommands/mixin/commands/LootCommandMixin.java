@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.drex.offlinecommands.OfflineCommands;
 import me.drex.offlinecommands.commands.OfflineEntityArgument;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.commands.CommandResponseTracker;
 import net.minecraft.server.commands.LootCommand;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -14,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collection;
@@ -59,16 +61,16 @@ public abstract class LootCommandMixin {
         method = "playerGive",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer(Collection<ServerPlayer> collection, List<ItemStack> list, @Coerce Object callback, CallbackInfoReturnable<Integer> cir) {
-        OfflineCommands.saveEntities(collection);
+    private static void saveOfflinePlayer(Collection<ServerPlayer> players, List<ItemStack> drops, CommandResponseTracker<ItemStack> usedItems, CallbackInfo ci) {
+        OfflineCommands.saveEntities(players);
     }
 
     @Inject(
         method = "entityReplace",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer(Collection<? extends Entity> collection, int i, int j, List<ItemStack> list, @Coerce Object callback, CallbackInfoReturnable<Integer> cir) {
-        OfflineCommands.saveEntities(collection);
+    private static void saveOfflinePlayer(Collection<? extends Entity> entities, int startSlot, int count, List<ItemStack> drops, CommandResponseTracker<ItemStack> usedItems, CallbackInfo ci) {
+        OfflineCommands.saveEntities(entities);
     }
 
 }

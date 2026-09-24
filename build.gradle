@@ -1,8 +1,8 @@
 import org.jetbrains.changelog.Changelog
 
 plugins {
-	id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
-	id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+	id 'net.fabricmc.fabric-loom' version '1.18-SNAPSHOT'
+	id "me.modmuss50.mod-publish-plugin" version "2.2.1"
 	id 'org.jetbrains.changelog' version '2.+'
 }
 
@@ -70,6 +70,8 @@ publishMods {
 		projectId = "1040104"
 		accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
 		minecraftVersions.add(project.curseforge_minecraft_version)
+		client = true
+		server = true
 	}
 	github {
 		accessToken = providers.environmentVariable("GITHUB_TOKEN")

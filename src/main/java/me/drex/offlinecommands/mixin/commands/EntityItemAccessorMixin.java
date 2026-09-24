@@ -5,33 +5,29 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.drex.offlinecommands.OfflineCommands;
 import me.drex.offlinecommands.commands.OfflineEntityArgument;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.commands.ItemCommands;
+import net.minecraft.server.commands.item.EntityItemAccessor;
+import net.minecraft.server.commands.item.ItemAccessor;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.slot.SlotSource;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Collection;
 
-@Mixin(ItemCommands.class)
-public abstract class ItemCommandsMixin {
+// Required for the /item command
+@Mixin(EntityItemAccessor.class)
+public abstract class EntityItemAccessorMixin {
+    @Shadow
+    @Final
+    private Collection<? extends Entity> entities;
 
     @Redirect(
-        method = "*",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/commands/arguments/EntityArgument;getEntity(Lcom/mojang/brigadier/context/CommandContext;Ljava/lang/String;)Lnet/minecraft/world/entity/Entity;"
-        )
-    )
-    private static Entity getOfflineEntity(CommandContext<CommandSourceStack> commandContext, String string) throws CommandSyntaxException {
-        return OfflineEntityArgument.getOfflineEntity(commandContext, string);
-    }
-
-    @Redirect(
-        method = "*",
+        method = "lambda$static$2",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/commands/arguments/EntityArgument;getEntities(Lcom/mojang/brigadier/context/CommandContext;Ljava/lang/String;)Ljava/util/Collection;"
@@ -42,11 +38,11 @@ public abstract class ItemCommandsMixin {
     }
 
     @Inject(
-        method = "setEntityItem",
+        method = "setItems",
         at = @At("RETURN")
     )
-    private static void saveOfflinePlayer(CommandSourceStack commandSourceStack, Collection<? extends Entity> collection, int i, ItemStack itemStack, CallbackInfoReturnable<Integer> cir) {
-        OfflineCommands.saveEntities(collection);
+    private void saveOfflinePlayer(CommandSourceStack source, SlotSource slotSource, ItemAccessor.SetterFunction<Entity> function, CallbackInfo ci) {
+        OfflineCommands.saveEntities(entities);
     }
 
 }
