@@ -47,7 +47,7 @@ public class OfflineEntityArgument extends EntityArgument {
         }
         // Replicate vanilla...
         if (list.size() != 1) {
-            throw EntityArgument.NO_PLAYERS_FOUND.create();
+            throw EntityArgument.ERROR_NOT_SINGLE_PLAYER.create();
         }
         return list.get(0);
     }

@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "me.drex.offlinecommands.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_25",
   "mixins": [
     "EntitySelectorMixin",
     "accessor.PlayerListAccessor",
@@ -24,7 +24,6 @@
     "commands.SpreadPlayersCommandMixin",
     "commands.TagCommandMixin",
     "commands.TeleportCommandMixin",
-    "commands.data.EntityDataAccessor$1Mixin",
     "commands.data.EntityDataAccessorMixin"
   ],
   "injectors": {

@@ -22,6 +22,6 @@ public abstract class ExecuteCommandMixin {
         )
     )
     private static Collection<? extends Entity> getOfflineEntities(CommandContext<CommandSourceStack> commandContext, String string) throws CommandSyntaxException {
-        return OfflineEntityArgument.getOfflineEntities(commandContext, string);
+        return OfflineEntityArgument.getOptionalOfflineEntities(commandContext, string);
     }
 }

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-10-11
+### Fixed
+- Execute selectors failing when no entities match
+
 ## [1.0.3] - 2026-03-24
 ### Fixed
 - Crash when user doesn't exist
